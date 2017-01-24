@@ -1,0 +1,104 @@
+CREATE TABLE `author` (
+  `author_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  PRIMARY KEY (`author_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `cart` (
+  `card_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT '1',
+  PRIMARY KEY (`card_id`,`item_id`),
+  KEY `cart_fk2_idx` (`item_id`),
+  CONSTRAINT `cart_fk1` FOREIGN KEY (`card_id`) REFERENCES `person` (`card_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `cart_fk2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `fine` (
+  `order_number` int(11) NOT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  `payment_status` varchar(10) DEFAULT 'unpaid',
+  `note` varchar(45) DEFAULT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  PRIMARY KEY (`order_number`),
+  CONSTRAINT `fine_fk1` FOREIGN KEY (`order_number`) REFERENCES `loan` (`order_number`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `item` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(50) DEFAULT NULL COMMENT 'Type of item',
+  `isbn` varchar(45) DEFAULT NULL,
+  `title` varchar(200) DEFAULT NULL,
+  `category` varchar(45) DEFAULT NULL,
+  `pages` int(11) DEFAULT NULL,
+  `publication` varchar(100) DEFAULT NULL,
+  `edition` int(11) DEFAULT NULL,
+  `year` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `active_ind` int(11) DEFAULT '1',
+  `note` varchar(100) DEFAULT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  PRIMARY KEY (`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `item_author` (
+  `item_id` int(11) NOT NULL,
+  `author_id` int(11) NOT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  PRIMARY KEY (`item_id`,`author_id`),
+  KEY `item_author_FK2_idx` (`author_id`),
+  CONSTRAINT `item_author_FK1` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `item_author_FK2` FOREIGN KEY (`author_id`) REFERENCES `author` (`author_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `loan` (
+  `order_number` int(11) NOT NULL AUTO_INCREMENT,
+  `card_id` int(11) DEFAULT NULL,
+  `item_id` int(11) DEFAULT NULL,
+  `date_out` date DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `date_in` date DEFAULT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  PRIMARY KEY (`order_number`),
+  KEY `loan_fk1_idx` (`card_id`),
+  KEY `loan_fk2_idx` (`item_id`),
+  CONSTRAINT `loan_fk1` FOREIGN KEY (`card_id`) REFERENCES `person` (`card_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `loan_fk2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `person` (
+  `card_number` int(11) NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(60) DEFAULT NULL,
+  `middle_name` varchar(60) DEFAULT NULL,
+  `last_name` varchar(60) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `role` varchar(20) DEFAULT NULL,
+  `user_group` varchar(2) DEFAULT NULL,
+  `email_id` varchar(45) DEFAULT NULL,
+  `phone_number` varchar(45) DEFAULT NULL,
+  `updated_by` varchar(45) DEFAULT NULL,
+  `updated_date` date DEFAULT NULL,
+  `password` char(255) DEFAULT NULL,
+  `username` varchar(20) DEFAULT NULL,
+  `approved` int(11) DEFAULT '0',
+  UNIQUE KEY `card_number_UNIQUE` (`card_number`),
+  KEY `person_name` (`first_name`,`middle_name`,`last_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `wishlist` (
+  `card_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  PRIMARY KEY (`card_id`,`item_id`),
+  KEY `wishlist_fk2_idx` (`item_id`),
+  CONSTRAINT `wishlist_fk1` FOREIGN KEY (`card_id`) REFERENCES `person` (`card_number`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `wishlist_fk2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
